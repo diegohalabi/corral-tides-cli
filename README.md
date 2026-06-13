@@ -14,6 +14,20 @@ Este proyecto se conecta en vivo de manera invisible con el servicio del SHOA, e
 - **Navegación interactiva por teclado**: menú manejado íntegramente con las flechas de dirección (`↑`, `↓`), con una estética minimalista profunda.
 - **Diseño responsivo**: centrado automáticamente y con relajación geométrica, adaptable a cualquier tamaño de pantalla.
 
+## 🖼 Screenshots
+
+### Menú Principal Interactivo
+![Menú Principal](screenshots/main.png)
+
+### Nowcast de Mareas (3 Días)
+![Nowcast 3 Días](screenshots/marea_3d.png)
+
+### Proyección Semanal Extendida (7 Días)
+![Proyección Semanal](screenshots/marea_7d.png)
+
+### Actograma Mensual Cronobiológico (30 Días)
+![Actograma Mensual](screenshots/marea_actograma.png)
+
 ## ⚙️ Instalación
 
 1. Clona el repositorio:

@@ -1,4 +1,11 @@
 #!/usr/bin/env python3
+"""
+Módulo Nowcast (Proyección a 3 Días)
+Se encarga de conectarse con el servidor remoto del SHOA, parsear las tablas HTML nativas
+y aplicar una interpolación cosenoidal a tramos (Piecewise Cosine Interpolation)
+para trazar un gráfico de alta definición con el flujo de la marea, mostrando
+las pleamares y bajamares exactas, todo encapsulado en paneles TUI.
+"""
 # -*- coding: utf-8 -*-
 
 """

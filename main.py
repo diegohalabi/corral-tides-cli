@@ -1,4 +1,11 @@
 #!/usr/bin/env python3
+"""
+Módulo Principal de la CLI de Mareas (Tides Terminal UI)
+Este script actúa como el punto de entrada central para la aplicación. 
+Implementa una interfaz gráfica de terminal interactiva (TUI) extremadamente minimalista,
+gestionando la navegación por teclado a bajo nivel para ofrecer una experiencia similar a
+los modernos frameworks CLI. También orquesta actualizaciones del caché de datos.
+"""
 import os
 import sys
 import time

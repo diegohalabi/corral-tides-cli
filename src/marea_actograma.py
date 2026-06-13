@@ -1,4 +1,12 @@
 #!/usr/bin/env python3
+"""
+Módulo Actograma Cronobiológico (30 Días)
+Implementa una técnica de visualización científica llamada "Double-Plotted Actogram".
+Proyecta 30 días en el eje Y (con 48 horas en el eje X, duplicando el día siguiente) 
+para evidenciar matemáticamente el "drifting" y la progresión del ciclo lunar 
+(desfase de ~50 minutos diarios) respecto al ciclo circadiano solar de 24 horas.
+Utiliza escalado homogéneo absoluto para garantizar una presentación simétrica perfecta.
+"""
 import os
 import sys
 import json

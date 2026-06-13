@@ -1,4 +1,10 @@
 #!/usr/bin/env python3
+"""
+Módulo de Proyección Semanal (7 Días)
+Extiende el motor de cálculo cosenoidal a tramos para trazar las variaciones de marea
+a lo largo de toda una semana. Además de presentar la ola sinoidal prolongada, 
+expone una tabla con el registro oficial extendido del SHOA para la semana.
+"""
 # -*- coding: utf-8 -*-
 
 """
