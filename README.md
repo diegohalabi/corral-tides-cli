@@ -1,16 +1,18 @@
 # Corral Tides CLI
 
-Una Terminal User Interface (TUI) extremadamente minimalista con estética hacker para visualizar, monitorear y analizar el comportamiento de las mareas en **Puerto Corral, Chile**.
+Una Terminal User Interface (TUI) extremadamente minimalista con estética para visualizar, monitorear y analizar el comportamiento de las mareas en **Puerto Corral, Chile**, con énfasis en las mareas bajas.
+
+Programado por interés personal para identificar la mejor hora de paseo en la playa de Curiñanco junto a mi familia y así encontrar (y rescatar) vida marina que haya quedado varada por la marea baja.
 
 Este proyecto se conecta en vivo de manera invisible con el servicio del SHOA, extrae los datos limpios en segundo plano y despliega proyecciones locales utilizando interpolación cosenoidal a tramos. Toda la arquitectura funciona *offline-first* apoyándose en una memoria caché automática para no abusar del servidor.
 
 ## 🌊 Características
 
-- **Nowcast (3 Días)**: Monitoreo a corto plazo mediante un ploteo continuo con indicadores flotantes de las próximas bajamares.
-- **Proyección Semanal (7 Días)**: Análisis extendido a 7 días y una tabla informativa formateada y codificada por colores.
-- **Actograma Mensual (30 Días)**: Una potente herramienta inspirada en cronobiología (Double-Plotted Actogram) para trazar visualmente el corrimiento de la fase lunar a lo largo de 30 días, identificando el "drifting" (desfase) de pleamares y bajamares de manera totalmente orgánica.
-- **Navegación Interactiva por Teclado**: Menú manejado íntegramente por flechas de dirección (`↑`, `↓`) con estética minimalista profunda.
-- **Diseño Responsivo**: Auto-centrado y relajación geométrica adaptable a cualquier tamaño de terminal.
+- **Nowcast (3 días)**: monitoreo a corto plazo mediante un ploteo continuo con indicadores flotantes de las próximas bajamares.
+- **Proyección semanal (7 días)**: análisis extendido a 7 días y una tabla informativa formateada y codificada por colores.
+- **Actograma mensual (30 días)**: una potente herramienta inspirada en la cronobiología (Double-Plotted Actogram) para trazar visualmente el corrimiento de la fase lunar a lo largo de 30 días, identificando el "drifting" (desfase) de pleamares y bajamares de manera totalmente orgánica.
+- **Navegación interactiva por teclado**: menú manejado íntegramente con las flechas de dirección (`↑`, `↓`), con una estética minimalista profunda.
+- **Diseño responsivo**: centrado automáticamente y con relajación geométrica, adaptable a cualquier tamaño de pantalla.
 
 ## ⚙️ Instalación
 
@@ -33,13 +35,13 @@ Este proyecto se conecta en vivo de manera invisible con el servicio del SHOA, e
 
 ## 🚀 Uso
 
-Ejecuta el menú principal. Si es la primera vez que lo corres, el programa contactará a SHOA y creará un archivo caché inteligente `~/.cache/mareas_corral.json`. 
+Ejecuta el menú principal. Si es la primera vez que lo corres, el programa contactará a SHOA y creará un archivo de caché inteligente en `~/.cache/mareas_corral.json`. 
 
 ```bash
 ./main.py
 ```
 
-Utiliza las flechas del teclado y presiona `ENTER` para moverte a través del Nowcast, Proyecciones o actualizar los datos manualmente (el sistema se auto-actualiza solo si los datos cumplen 1 año de antigüedad).
+Utiliza las flechas del teclado y presiona `ENTER` para moverte a través del Nowcast, Proyecciones o actualizar los datos manualmente (el sistema se autoactualiza solo si los datos cumplen 1 año de antigüedad).
 
 ## 🛠 Arquitectura
 
