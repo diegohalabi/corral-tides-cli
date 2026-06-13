@@ -59,7 +59,7 @@ def check_auto_update():
 
 def _get_px():
     term_width = console.width
-    return " " * max(0, (term_width - 38) // 2)
+    return " " * max(0, (term_width - 45) // 2)
 
 def run_update(auto=False):
     """Ejecuta el script subyacente para descargar la data."""
@@ -104,11 +104,17 @@ def display_menu():
     selected_idx = 0
     
     ascii_art_lines = [
-        "[bold cyan]  _____ _    _             [/bold cyan]",
-        "[bold cyan] |_   _(_)__| |___ ___  ___[/bold cyan]",
-        "[bold cyan]   | | | / _` / -_|_-< / -_)[/bold cyan]",
-        "[bold cyan]   |_| |_\__,_\___/__/ \___|[/bold cyan]",
-        "[dim]        PUERTO CORRAL      [/dim]"
+        "          [white]░[/][#ff0000]▄██▄[/][white]░[/]                       ",
+        "        [#ff3300]▄██▀  ▀██▄[/]                     ",
+        "      [#ff6600]▄██▀      ▀██▄[/]                   ",
+        "     [#ff9900]▄█▀          ▀█▄[/]                  ",
+        "   [#00ffaa]█[/][#555555]──────────────────[/#555555][#00ffaa]█[/][#555555]──────────────────[/#555555][#00ffaa]█[/]",
+        "                        [#00aaff]▀█▄          ▄█▀[/]  ",
+        "                         [#0066ff]▀██▄      ▄██▀[/]   ",
+        "                           [#3300cc]▀██▄  ▄██▀[/]     ",
+        "                             [white]░[/][#6600cc]▀██▀[/][white]░[/]       ",
+        "",
+        "   [bold white]M A R E A S   P U E R T O   C O R R A L[/bold white]"
     ]
 
     while True:
@@ -117,10 +123,10 @@ def display_menu():
         term_height = console.height
         term_width = console.width
         
-        # Relajación vertical
-        pad_y = max(0, (term_height - 18) // 2)
-        # Relajación horizontal asumiendo un ancho de bloque de ~38 caracteres
-        pad_x_spaces = max(0, (term_width - 38) // 2)
+        # Relajación vertical adaptada al nuevo logo
+        pad_y = max(0, (term_height - 20) // 2)
+        # Relajación horizontal asumiendo un ancho de bloque de 45 caracteres
+        pad_x_spaces = max(0, (term_width - 45) // 2)
         px = " " * pad_x_spaces
         
         for _ in range(pad_y):
@@ -134,15 +140,14 @@ def display_menu():
         
         for i, opt in enumerate(options):
             if i == selected_idx:
-                # Minimalismo puro: Chevron cian y texto blanco bold
-                console.print(px + f"  [bold cyan]❯[/bold cyan] [bold white]{opt}[/bold white]")
+                # Minimalismo puro: Chevron cian y texto blanco bold desplazado
+                console.print(px + f"      [bold cyan]❯[/bold cyan] [bold white]{opt}[/bold white]")
             else:
                 # Opciones inactivas tenues
-                console.print(px + f"    [dim]{opt}[/dim]")
+                console.print(px + f"        [dim]{opt}[/dim]")
                 
         console.print()
-        console.print()
-        console.print(px + "[dim]  (Usa ↑/↓ para mover y ENTER para seleccionar)[/dim]")
+        console.print(px + "[dim](Usa ↑/↓ para mover y ENTER para seleccionar)[/dim]")
         
         for _ in range(pad_y):
             console.print()
