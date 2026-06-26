@@ -1,15 +1,11 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
 Módulo Actograma Cronobiológico (30 Días)
-Implementa una técnica de visualización científica llamada "Double-Plotted Actogram".
-Proyecta 30 días en el eje Y (con 48 horas en el eje X, duplicando el día siguiente) 
-para evidenciar matemáticamente el "drifting" y la progresión del ciclo lunar 
-(desfase de ~50 minutos diarios) respecto al ciclo circadiano solar de 24 horas.
-Utiliza escalado homogéneo absoluto para garantizar una presentación simétrica perfecta.
+Implementa la técnica "Double-Plotted Actogram" utilizando los datos de core.py.
 """
 import os
 import sys
-import json
 import datetime
 import plotext as plt
 import re
@@ -17,6 +13,14 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.text import Text
 import locale
+
+# Asegurar import de core.py
+try:
+    from core import load_local_tides
+except ImportError:
+    # Si se ejecuta directamente fuera del PYTHONPATH de src/
+    sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+    from core import load_local_tides
 
 try:
     locale.setlocale(locale.LC_TIME, 'es_CL.UTF-8')
@@ -28,54 +32,24 @@ except locale.Error:
 
 console = Console()
 
-CACHE_FILE = os.path.expanduser("~/.cache/mareas_corral.json")
-
-def load_data():
-    if not os.path.exists(CACHE_FILE):
-        console.print(f"[bold red]Error:[/bold red] No se encontró el caché en {CACHE_FILE}. Ejecuta primero mareas_corral.py --update")
-        sys.exit(1)
-        
-    with open(CACHE_FILE, 'r') as f:
-        data = json.load(f)
-        
-    if isinstance(data, list):
-        tides_raw = data
-    else:
-        tides_raw = data.get('tides', [])
-        
-    if not tides_raw:
-        console.print("[bold red]Error:[/bold red] El caché está vacío o corrupto.")
-        sys.exit(1)
-        
-    return tides_raw
-
 def generate_actogram():
-    tides_raw = load_data()
+    try:
+        tides_raw = load_local_tides()
+    except Exception as e:
+        console.print(f"[bold red]Error al cargar datos:[/bold red] {e}")
+        sys.exit(1)
     
-    now = datetime.datetime.now().astimezone()
+    # Usamos timezone naive de forma consistente en todo el proyecto
+    now = datetime.datetime.now().replace(second=0, microsecond=0)
     today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
-    
     end_date = today_start + datetime.timedelta(days=31)
     
-    tides = []
-    for t in tides_raw:
-        try:
-            dt = datetime.datetime.fromisoformat(t['time'])
-        except ValueError:
-            dt = datetime.datetime.strptime(t['time'], "%Y-%m-%dT%H:%M:%S")
-            
-        if dt.tzinfo is None:
-            dt = dt.replace(tzinfo=now.tzinfo)
-            
-        if today_start <= dt <= end_date:
-            tides.append({
-                'time': dt,
-                'type': t.get('type', 'Unknown'),
-                'height': float(t.get('height', 0))
-            })
+    # Filtrar mareas del rango de interés (próximos 30-31 días)
+    tides = [t for t in tides_raw if today_start <= t['time'] <= end_date]
             
     if not tides:
-        console.print("[bold red]Error:[/bold red] No hay datos en el rango requerido.")
+        console.print("[bold red]Error:[/bold red] No hay datos en el rango requerido (próximos 30 días).")
+        console.print("Por favor actualiza la base de datos desde el menú principal.")
         sys.exit(1)
 
     pleamares_x, pleamares_y = [], []
@@ -119,26 +93,19 @@ def generate_actogram():
     plt.axes_color('none')
     plt.ticks_color('white')
 
-    # Desactivamos el límite de tamaño interno para forzar una altura matemática exacta
     plt.limit_size(False, False)
     term_width = console.width if console.width > 20 else 80
-    # 33 es la altura matemática exacta en plotext para renderizar 30 líneas (1 por día) sin saltos
     plt.plotsize(term_width - 4, 33)
 
-    # 1. Dibujar líneas punteadas grises horizontales de fondo por cada día.
-    # Esto asegura también matemáticamente a plotext que existen todos los puntos Y,
-    # forzando un espaciado vertical absolutamente homogéneo.
     for d in range(30):
         plt.plot([0, 48], [d, d], color="gray", marker=".")
 
-    # 2. Línea punteada divisoria en el centro (24h)
     plt.plot([24, 24], [0, 29], color="yellow", marker=".")
 
-    # 3. Dibujar marcadores discretos para Pleamares (sin leyenda interna para no superponer)
     if pleamares_x:
-        plt.scatter(pleamares_x, pleamares_y, color="cyan", marker=".")
+        # Marcador propio ("o") para no confundirse con la grilla de puntos "."
+        plt.scatter(pleamares_x, pleamares_y, color="cyan", marker="o")
         
-    # 4. Dibujar marcadores grandes y fuertes para Bajamares (sin leyenda interna)
     if bajamares_x:
         plt.scatter(bajamares_x, bajamares_y, color="red", marker="x")
 
@@ -146,7 +113,6 @@ def generate_actogram():
     plt.yticks(yticks_y, yticks_labels)
     plt.xticks([i * 6 for i in range(9)], [f"{i*6}h" for i in range(9)])
     
-    # Fijamos los límites para que los 30 días tengan su espacio asegurado
     plt.xlim(0, 48)
     plt.ylim(-0.5, 29.5)
     plt.grid(False, False)
@@ -155,14 +121,11 @@ def generate_actogram():
     plt.xlabel("Horas (0-24h: Día Base  |  24-48h: Día Siguiente)")
     
     ansi_plot = plt.build()
-    
-    # Limpieza estricta de fondos ANSI para transparencia
     ansi_plot = re.sub(r'\x1b\[48;5;\d+m', '', ansi_plot)
     
-    # Movemos la leyenda al marco exterior del panel para que jamás ensucie los datos
     panel = Panel(
         Text.from_ansi(ansi_plot), 
-        title="[bold cyan]Actograma de Mareas[/bold cyan] | [cyan]· Pleamar[/cyan] | [red]x Bajamar[/red]", 
+        title="[bold cyan]Actograma de Mareas[/bold cyan] | [cyan]o Pleamar[/cyan] | [red]x Bajamar[/red]",
         border_style="cyan"
     )
     console.print(panel)
