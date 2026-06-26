@@ -28,14 +28,17 @@ def get_key():
     fd = sys.stdin.fileno()
     old_settings = termios.tcgetattr(fd)
     try:
-        tty.setraw(sys.stdin.fileno())
-        ch = sys.stdin.read(1)
+        tty.setraw(fd)
+        # Leemos directo del descriptor con os.read (sin buffer): así select() ve
+        # los bytes restantes de las secuencias de escape. Con sys.stdin.read el
+        # buffer interno de Python se tragaría '[A' y la flecha parecería un ESC.
+        ch = os.read(fd, 1).decode('utf-8', 'ignore')
         if ch == '\x1b': # Secuencia de escape
             # Si no llegan más bytes de inmediato, es un ESC aislado (no una flecha):
             # evita bloquear esperando dos caracteres que nunca llegarán.
-            if not select.select([sys.stdin], [], [], 0.05)[0]:
+            if not select.select([fd], [], [], 0.05)[0]:
                 return 'esc'
-            ch2 = sys.stdin.read(2)
+            ch2 = os.read(fd, 2).decode('utf-8', 'ignore')
             if ch2 == '[A': return 'up'
             if ch2 == '[B': return 'down'
             if ch2 == '[C': return 'right'
